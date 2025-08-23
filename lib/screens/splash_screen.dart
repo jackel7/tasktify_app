@@ -42,7 +42,8 @@ class _SplashScreenState
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginScreen(),
+              builder: (context) =>
+                  const LoginScreen(),
             ),
           );
         }

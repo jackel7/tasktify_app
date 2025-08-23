@@ -12,7 +12,9 @@ class Toast {
       context: context,
       title: Text(
         message,
-        style: TextStyle(color: Colors.white),
+        style: const TextStyle(
+          color: Colors.white,
+        ),
       ),
 
       backgroundColor: isError

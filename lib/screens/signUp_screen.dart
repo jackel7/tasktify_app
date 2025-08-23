@@ -162,7 +162,9 @@ class _SignupScreenState
                         "SignUp Successful!",
                       );
                       Future.delayed(
-                        Duration(seconds: 2),
+                        const Duration(
+                          seconds: 2,
+                        ),
                         () {
                           Navigator.pushReplacement(
                             context,

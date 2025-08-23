@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
+import 'package:taskify/models/task.dart';
+import 'package:taskify/services/task_services.dart';
 import 'package:taskify/widgets/myButton.dart';
+import 'package:taskify/widgets/myToast.dart';
 
 class AddtaskScreen extends StatefulWidget {
   const AddtaskScreen({super.key});
@@ -15,6 +18,7 @@ class _AddtaskScreenState
   final taskTitleController =
       TextEditingController();
   final taskController = TextEditingController();
+  bool loading = false;
   final List<String> priorities = [
     "High",
     "Medium",
@@ -22,9 +26,9 @@ class _AddtaskScreenState
   ];
   String selectedPriority = "Medium"; // default
   final Map<String, Color> priorityColors = {
-    "High": AppColors.highPriority,
-    "Medium": AppColors.mediumPriority,
-    "Low": AppColors.lowPriority,
+    "High": const Color(0xFF8E24AA),
+    "Medium": const Color(0xFFD81B60),
+    "Low": const Color(0xFF00ACC1),
   };
 
   @override
@@ -49,6 +53,9 @@ class _AddtaskScreenState
             children: [
               const SizedBox(height: 20),
               TextFormField(
+                textCapitalization:
+                    TextCapitalization.sentences,
+
                 controller: taskTitleController,
                 decoration: InputDecoration(
                   hintText: 'Add Title',
@@ -72,6 +79,8 @@ class _AddtaskScreenState
               ),
               const SizedBox(height: 20),
               TextFormField(
+                textCapitalization:
+                    TextCapitalization.sentences,
                 maxLines: 5,
                 controller: taskController,
                 decoration: InputDecoration(
@@ -142,7 +151,54 @@ class _AddtaskScreenState
               const SizedBox(height: 150),
               Mybutton(
                 text: "Save",
-                onTap: () {},
+                isLoading: loading,
+                onTap: () async {
+                  final title =
+                      taskTitleController.text
+                          .trim();
+                  final task = taskController.text
+                      .trim();
+
+                  if (title.isEmpty ||
+                      task.isEmpty) {
+                    Toast.showToast(
+                      context,
+                      "Please enter data",
+                      isError: true,
+                    );
+                    return;
+                  }
+                  setState(() {
+                    loading = true;
+                  });
+                  final newTask = Task(
+                    title: title,
+                    description: task,
+                    priority: selectedPriority,
+                    createdAt: DateTime.now()
+                        .millisecondsSinceEpoch,
+                  );
+                  try {
+                    await TaskServices().addTask(
+                      newTask,
+                    );
+                    Toast.showToast(
+                      context,
+                      "Task Added!",
+                    );
+                    taskController.clear();
+                    taskTitleController.clear();
+                  } catch (e) {
+                    Toast.showToast(
+                      context,
+                      e.toString(),
+                    );
+                  } finally {
+                    setState(() {
+                      loading = false;
+                    });
+                  }
+                },
               ),
             ],
           ),
