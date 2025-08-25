@@ -11,10 +11,8 @@ It helps users manage their daily tasks efficiently with **multi-user support**,
 - 👥 **Multi-User Support** – Each user can securely log in and manage their own tasks.  
 - 📌 **Task Management** – Add, update, and delete tasks seamlessly.  
 - 🎨 **Priority-Based Colors** – Tasks are highlighted in different colors based on priority:  
-  - 🟥 **High Priority** – Red  
-  - 🟧 **Medium Priority** – Orange  
-  - 🟩 **Low Priority** – Green  
-- 📅 **Live Updates** – Any changes appear instantly across all logged-in devices.  
+  
+- 📅 **Live Updates** – Any changes appear instantly .  
 
 ---
 
