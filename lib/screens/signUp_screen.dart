@@ -19,6 +19,7 @@ class _SignupScreenState
   final emailController = TextEditingController();
   final passController = TextEditingController();
   bool loading = false;
+  bool obscure = true;
 
   final AuthService _authService = AuthService();
   @override
@@ -92,11 +93,21 @@ class _SignupScreenState
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
+                      obscureText: obscure,
                       controller: passController,
                       decoration: InputDecoration(
                         hintText: "Password",
                         prefixIcon: const Icon(
                           Icons.lock,
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            obscure = !obscure;
+                            setState(() {});
+                          },
+                          icon: const Icon(
+                            Icons.visibility_off,
+                          ),
                         ),
                         border: OutlineInputBorder(
                           borderRadius:

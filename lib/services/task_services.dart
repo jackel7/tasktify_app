@@ -21,4 +21,20 @@ class TaskServices {
     final newTaskRef = taskRef.push();
     await newTaskRef.set(task.toMap());
   }
+
+  Future<void> updateTask(
+    String taskId,
+    Task task,
+  ) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw Exception("User not logged in");
+    }
+    await _db
+        .child('users')
+        .child(user.uid)
+        .child("tasks")
+        .child(taskId)
+        .update(task.toMap());
+  }
 }

@@ -6,6 +6,8 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
 import 'package:taskify/screens/addTask_screen.dart';
+import 'package:taskify/screens/login_screen.dart';
+import 'package:taskify/screens/updateTask_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? email;
@@ -59,7 +61,25 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: AppColors.buttonText,
         centerTitle: true,
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await FirebaseAuth.instance
+                  .signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const LoginScreen(),
+                ),
+              );
+            },
+            icon: Icon(Icons.logout, size: 30),
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
+
       body: Column(
         children: [
           const SizedBox(height: 20),
@@ -130,7 +150,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       searchController.text
                           .trim()
                           .toLowerCase(),
-                    )) {
+                    ) &&
+                    !description
+                        .toLowerCase()
+                        .contains(
+                          searchController.text
+                              .trim()
+                              .toLowerCase(),
+                        ) &&
+                    !priority
+                        .toLowerCase()
+                        .contains(
+                          searchController.text
+                              .trim()
+                              .toLowerCase(),
+                        )) {
                   return const SizedBox.shrink();
                 }
 
@@ -238,14 +272,35 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icon(Icons.more_vert),
                       itemBuilder: (context) => [
                         PopupMenuItem(
-                          onTap: () {},
+                          onTap: () {
+                            final taskId =
+                                snapshot.key;
+                            if (taskId != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdatetaskScreen(
+                                        taskId:
+                                            taskId,
+                                        title:
+                                            title,
+                                        task:
+                                            description,
+                                        priority:
+                                            priority,
+                                      ),
+                                ),
+                              );
+                            }
+                          },
                           value: 1,
                           child: const ListTile(
                             leading: Icon(
                               Icons.edit,
                             ),
                             title: Text(
-                              "   Edit   ",
+                              "   Edit  ",
                             ),
                           ),
                         ),

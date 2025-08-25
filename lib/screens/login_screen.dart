@@ -22,6 +22,7 @@ class _LoginScreenState
   final passController = TextEditingController();
   bool loading = false;
   final AuthService _authService = AuthService();
+  bool obscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,8 @@ class _LoginScreenState
                 child: Column(
                   children: [
                     TextFormField(
+                      keyboardType: TextInputType
+                          .emailAddress,
                       controller: emailController,
                       decoration: InputDecoration(
                         hintText: 'Email',
@@ -95,11 +98,23 @@ class _LoginScreenState
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
+                      keyboardType:
+                          TextInputType.text,
+                      obscureText: obscure,
                       controller: passController,
                       decoration: InputDecoration(
                         hintText: "Password",
                         prefixIcon: const Icon(
                           Icons.lock,
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            obscure = !obscure;
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.visibility_off,
+                          ),
                         ),
                         border: OutlineInputBorder(
                           borderRadius:
