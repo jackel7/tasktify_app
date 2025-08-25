@@ -1,66 +1,43 @@
-📝 Taskify – Real-time To-Do App (Flutter + Firebase)
+# Taskify - Smart Task Manager  
 
-A simple yet powerful To-Do application built with Flutter and Firebase Realtime Database.
-Taskify allows users to create, update, and manage tasks in real-time, with multi-user support.
+Taskify is a **Flutter-based task management app** powered by **Firebase Realtime Database**.  
+It helps users manage their daily tasks efficiently with **multi-user support**, **real-time updates**, and a **priority-based color system**.  
 
-🚀 Features
+---
 
-✅ User Authentication (Firebase Auth – Email & Password)
-✅ Add, Edit, Delete tasks in real-time
-✅ Multi-user support (each user has their own task list)
-✅ Task priority levels (with color indicators)
-✅ Clean & responsive UI
-✅ Firebase Realtime Database integration
+## 🚀 Features  
 
-📸 Screenshots
+- 🔥 **Firebase Realtime Database** – All tasks are stored and synced in real-time.  
+- 👥 **Multi-User Support** – Each user can securely log in and manage their own tasks.  
+- 📌 **Task Management** – Add, update, and delete tasks seamlessly.  
+- 🎨 **Priority-Based Colors** – Tasks are highlighted in different colors based on priority:  
+  - 🟥 **High Priority** – Red  
+  - 🟧 **Medium Priority** – Orange  
+  - 🟩 **Low Priority** – Green  
+- 📅 **Live Updates** – Any changes appear instantly across all logged-in devices.  
 
-(Add your app screenshots here – e.g. login screen, task list, add task modal)
+---
 
-🛠️ Tech Stack
 
-Flutter (Dart)
+ 
 
-Firebase Authentication
+---
 
-Firebase Realtime Database
+## 🛠️ Tech Stack  
 
-FirebaseAnimatedList for real-time UI updates
+- **Frontend**: Flutter (Dart)  
+- **Backend**: Firebase Realtime Database + Firebase Authentication  
+- **State Management**: FirebaseAnimatedList  
 
-📂 Project Structure
+---
+
+## 📂 Project Structure  
+
+```bash
 lib/
- ┣ constants/       # App colors, styles
- ┣ screens/         # Login, Register, Home, AddTask screens
- ┣ widgets/         # Reusable widgets
- ┣ main.dart        # Entry point
-
-⚡ Getting Started
-Prerequisites
-
-Flutter installed → Install Flutter
-
-Firebase project set up → Firebase Console
-
-Setup
-
-Clone the repo:
-
-git clone https://github.com/your-username/taskify.git
-cd taskify
-
-
-Install dependencies:
-
-flutter pub get
-
-
-Configure Firebase:
-
-Add your google-services.json (Android) & GoogleService-Info.plist (iOS)
-
-Enable Firebase Authentication (Email/Password)
-
-Setup Firebase Realtime Database (rules for testing: allow read, write: true)
-
-Run the app:
-
-flutter run
+ ┣ screens/
+ ┃ ┣ home_screen.dart     # Displays tasks in real-time
+ ┃ ┣ addTask_screen.dart  # Add new tasks
+ ┣ constants/
+ ┃ ┗ colors.dart          # Priority-based color scheme
+ ┣ main.dart              # App entry point
