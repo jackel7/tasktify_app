@@ -1,4 +1,4 @@
-# Taskify - Smart Task Manager  
+# Taskify -  Task Manager  
 
 Taskify is a **Flutter-based task management app** powered by **Firebase Realtime Database**.  
 It helps users manage their daily tasks efficiently with **multi-user support**, **real-time updates**, and a **priority-based color system**.  
