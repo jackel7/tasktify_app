@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
+import 'package:taskify/firebase/firestore_list.screen.dart';
+import 'package:taskify/screens/forgotPassword_screen.dart';
 import 'package:taskify/screens/home_screen.dart';
 import 'package:taskify/screens/signUp_screen.dart';
 import 'package:taskify/services/auth_service.dart';
@@ -112,7 +115,7 @@ class _LoginScreenState
                             obscure = !obscure;
                             setState(() {});
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.visibility_off,
                           ),
                         ),
@@ -151,6 +154,36 @@ class _LoginScreenState
                   ],
                 ),
               ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const ForgotpasswordScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Forgot Password?",
+                      style: TextStyle(
+                        color: Colors.blue,
+
+                        decoration: TextDecoration
+                            .underline,
+                        decorationColor:
+                            Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 110),
 
               Mybutton(
@@ -162,51 +195,69 @@ class _LoginScreenState
                     setState(() {
                       loading = true;
                     });
-                    String? res =
-                        await _authService.login(
-                          email: emailController
-                              .text
-                              .trim(),
-                          password: passController
-                              .text
-                              .trim(),
+
+                    try {
+                      UserCredential userCred =
+                          await _authService.login(
+                            email: emailController
+                                .text
+                                .trim(),
+                            password:
+                                passController
+                                    .text
+                                    .trim(),
+                          );
+
+                      if (userCred.user == null) {
+                        Toast.showToast(
+                          context,
+                          "Login failed. Check your credentials.",
+                          isError: true,
                         );
-                    setState(() {
-                      loading = false;
-                    });
-                    if (res == null) {
-                      final user = FirebaseAuth
-                          .instance
-                          .currentUser;
+                        setState(
+                          () => loading = false,
+                        );
+                        return;
+                      }
+                      String uid =
+                          userCred.user!.uid;
+                      String? email =
+                          userCred.user!.email;
 
                       Toast.showToast(
                         context,
-                        'Login Successful!',
+                        "Welcome To Taskify!",
                       );
+
                       Future.delayed(
-                        Duration(seconds: 2),
+                        const Duration(
+                          seconds: 2,
+                        ),
                         () {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (
-                                    context,
-                                  ) => HomeScreen(
-                                    email: user!
-                                        .email,
-                                    uid: user.uid,
-                                  ),
+                                  (context) =>
+                                      HomeScreen(
+                                        email:
+                                            email,
+                                        uid: uid,
+                                      ),
                             ),
                           );
                         },
                       );
-                    } else {
+                    } catch (e) {
                       Toast.showToast(
                         context,
-                        res,
+                        e.toString(),
                         isError: true,
                       );
+                    } finally {
+                      setState(() {
+                        loading = false;
+                      });
                     }
                   }
                 },
@@ -227,7 +278,7 @@ class _LoginScreenState
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              SignupScreen(),
+                              const SignupScreen(),
                         ),
                       );
                     },

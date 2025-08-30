@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
 import 'package:taskify/models/task.dart';
@@ -173,15 +174,20 @@ class _AddtaskScreenState
                   });
                   final newTask = Task(
                     title: title,
-                    description: task,
+                    task: task,
                     priority: selectedPriority,
                     createdAt: DateTime.now()
                         .millisecondsSinceEpoch,
+                    isDone: false,
                   );
                   try {
                     await TaskServices().addTask(
                       newTask,
                     );
+                    print(
+                      "Task added for user: ${FirebaseAuth.instance.currentUser?.uid}",
+                    );
+
                     Toast.showToast(
                       context,
                       "Task Added!",

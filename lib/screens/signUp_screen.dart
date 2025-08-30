@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
 import 'package:taskify/screens/login_screen.dart';
@@ -18,6 +20,8 @@ class _SignupScreenState
   final _formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passController = TextEditingController();
+  final userNameController =
+      TextEditingController();
   bool loading = false;
   bool obscure = true;
 
@@ -51,6 +55,54 @@ class _SignupScreenState
                 key: _formKey,
                 child: Column(
                   children: [
+                    TextFormField(
+                      controller:
+                          userNameController,
+                      decoration: InputDecoration(
+                        hintText: 'User Name',
+                        prefixIcon: const Icon(
+                          Icons.person,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(
+                                10,
+                              ),
+                        ),
+                        focusedBorder:
+                            OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(
+                                    10,
+                                  ),
+                              borderSide:
+                                  const BorderSide(
+                                    color: Colors
+                                        .blue,
+                                    width: 2,
+                                  ),
+                            ),
+                      ),
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty) {
+                          return "Please enter user name";
+                        }
+                        if (userNameController
+                                    .text
+                                    .length <
+                                6 ||
+                            userNameController
+                                    .text
+                                    .length >
+                                12) {
+                          return "Username must be between 6 and 12 characters";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -155,7 +207,10 @@ class _SignupScreenState
                     setState(() {
                       loading = true;
                     });
-                    String? res =
+                  }
+                  try {
+                    UserCredential
+                    userCredential =
                         await _authService.signUp(
                           email: emailController
                               .text
@@ -164,35 +219,53 @@ class _SignupScreenState
                               .text
                               .trim(),
                         );
+
+                    String uid =
+                        userCredential.user!.uid;
+                    await FirebaseFirestore
+                        .instance
+                        .collection('users')
+                        .doc(uid)
+                        .set({
+                          'uid': uid,
+                          'userName':
+                              userNameController
+                                  .text
+                                  .trim(),
+                          'email': emailController
+                              .text
+                              .trim(),
+                          'createdAt':
+                              FieldValue.serverTimestamp(),
+                        });
+
+                    Toast.showToast(
+                      context,
+                      "Sign Up succesfull",
+                    );
+
+                    Future.delayed(
+                      const Duration(seconds: 2),
+                      () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const LoginScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    Toast.showToast(
+                      context,
+                      e.toString(),
+                      isError: true,
+                    );
+                  } finally {
                     setState(() {
                       loading = false;
                     });
-                    if (res == null) {
-                      Toast.showToast(
-                        context,
-                        "SignUp Successful!",
-                      );
-                      Future.delayed(
-                        const Duration(
-                          seconds: 2,
-                        ),
-                        () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const LoginScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      Toast.showToast(
-                        context,
-                        res,
-                        isError: true,
-                      );
-                    }
                   }
                 },
               ),

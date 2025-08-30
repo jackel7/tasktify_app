@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taskify/constants/colors.dart';
 import 'package:taskify/models/task.dart';
-import 'package:taskify/services/task_services.dart';
 import 'package:taskify/widgets/myButton.dart';
 import 'package:taskify/widgets/myToast.dart';
 
@@ -10,6 +11,7 @@ class UpdatetaskScreen extends StatefulWidget {
   final String title;
   final String task;
   final String priority;
+  final bool isDone;
 
   const UpdatetaskScreen({
     super.key,
@@ -17,6 +19,7 @@ class UpdatetaskScreen extends StatefulWidget {
     required this.title,
     required this.priority,
     required this.task,
+    required this.isDone,
   });
 
   @override
@@ -30,6 +33,7 @@ class _UpdatetaskScreenState
       TextEditingController();
   final taskController = TextEditingController();
   bool loading = false;
+  bool? isDone;
   final List<String> priorities = [
     "High",
     "Medium",
@@ -49,6 +53,7 @@ class _UpdatetaskScreenState
     taskController.text = widget.task;
     taskTitleController.text = widget.title;
     selectedPriority = widget.priority;
+    isDone = widget.isDone ?? false;
   }
 
   @override
@@ -168,6 +173,41 @@ class _UpdatetaskScreenState
                   ),
                 ],
               ),
+              // Inside Column, after Priority row and before SizedBox(height: 150)
+              Row(
+                children: [
+                  const Text(
+                    "Status: ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          AppColors.textPrimary,
+                    ),
+                  ),
+                  Checkbox(
+                    value: isDone,
+                    onChanged: (value) {
+                      setState(() {
+                        isDone =
+                            value ??
+                            false; // safe
+                      });
+                    },
+                  ),
+                  Text(
+                    isDone! ? "Done" : "Pending",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: isDone!
+                          ? Colors.green
+                          : Colors.redAccent,
+                    ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 150),
               Mybutton(
                 text: "Update",
@@ -191,19 +231,30 @@ class _UpdatetaskScreenState
                   setState(() {
                     loading = true;
                   });
-                  final newTask = Task(
-                    title: title,
-                    description: task,
+                  final updatedTask = Task(
+                    id: widget.taskId,
+                    title: taskTitleController
+                        .text
+                        .trim(),
+                    task: taskController.text
+                        .trim(),
                     priority: selectedPriority,
                     createdAt: DateTime.now()
                         .millisecondsSinceEpoch,
+                    isDone: isDone ?? false,
                   );
+                  final userId = FirebaseAuth
+                      .instance
+                      .currentUser!
+                      .uid;
                   try {
-                    await TaskServices()
-                        .updateTask(
-                          widget.taskId,
-                          newTask,
-                        );
+                    await FirebaseFirestore
+                        .instance
+                        .collection('users')
+                        .doc(userId)
+                        .collection('tasks')
+                        .doc(widget.taskId)
+                        .set(updatedTask.toMap());
                     Toast.showToast(
                       context,
                       "Task Updated!",

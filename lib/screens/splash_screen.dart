@@ -31,7 +31,7 @@ class _SplashScreenState
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(
-                email: user.email ?? '',
+                email: user.email,
                 uid: user.uid,
               ),
             ),
@@ -95,7 +95,7 @@ class _SplashScreenState
           ),
           const SizedBox(height: 10),
           const Text(
-            "Organize your day smartly ✨",
+            "Organize your Tasks smartly ✨",
             style: TextStyle(
               fontSize: 16,
               color: Colors.white70,

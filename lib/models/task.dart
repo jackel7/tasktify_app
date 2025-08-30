@@ -1,38 +1,44 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Task {
   final String? id;
   final String title;
-  final String description;
-  final String priority; // ✅ fixed
+  final String task;
+  final String priority;
+  final bool isDone;
   final int createdAt;
 
   Task({
     this.id,
     required this.title,
-    required this.description,
+    required this.task,
     required this.priority,
     required this.createdAt,
+    required this.isDone,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      "description": description,
-      "priority": priority, // ✅ correct key
+      "task": task,
+      "priority": priority,
       "createdAt": createdAt,
+      'isDone': isDone,
     };
   }
 
-  factory Task.fromMap(
-    Map<dynamic, dynamic> data,
-    String id,
+  factory Task.fromDocument(
+    DocumentSnapshot doc,
   ) {
+    final data =
+        doc.data() as Map<String, dynamic>;
     return Task(
-      id: id,
-      title: data["title"] ?? '',
-      description: data["description"] ?? '',
-      priority:
-          data['priority'] ?? "Medium", // ✅ fixed
-      createdAt: data['createdAt'] ?? 0,
+      id: doc.id,
+      title: data['title'],
+      task: data['task'],
+      priority: data['priority'],
+      createdAt: data['createdAt'],
+      isDone: data['isDone'],
     );
   }
 }
